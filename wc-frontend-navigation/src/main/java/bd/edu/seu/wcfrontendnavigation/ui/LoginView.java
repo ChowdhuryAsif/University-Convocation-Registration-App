@@ -9,15 +9,19 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
+
+import javax.servlet.http.HttpSession;
 
 
 @Route("login")
 public class LoginView extends Dialog {
 
-    public LoginView(AuthenticationService authenticationService){
+    public LoginView(AuthenticationService authenticationService, HttpSession httpSession){
         super();
 
         Image logo = new Image();
@@ -39,25 +43,32 @@ public class LoginView extends Dialog {
 
             switch (loginToken.getRole()){
                 case STUDENT:
+                    httpSession.setAttribute("user", loginToken);
                     loginButton.getUI().ifPresent(ui -> ui.navigate("student"));
                     break;
                 case HR_DEPUTY_REGISTRAR:
+                    httpSession.setAttribute("user", loginToken);
                     loginButton.getUI().ifPresent(ui -> ui.navigate("hr-deputy"));
                     break;
                 case ADMISSION_OFFICER:
+                    httpSession.setAttribute("user", loginToken);
                     loginButton.getUI().ifPresent(ui -> ui.navigate("admission-officer"));
                     break;
                 case COORDINATOR:
+                    httpSession.setAttribute("user", loginToken);
                     loginButton.getUI().ifPresent(ui -> ui.navigate("login"));
                     break;
                 case EXAM_OFFICER:
+                    httpSession.setAttribute("user", loginToken);
                     loginButton.getUI().ifPresent(ui -> ui.navigate("login"));
                     break;
                 case DEPUTY_REGISTRAR:
+                    httpSession.setAttribute("user", loginToken);
                     loginButton.getUI().ifPresent(ui -> ui.navigate("deputy-registrar"));
                     break;
                 case NO_ROLE:
-                    statusBar.setText("Incorrect Username or Password!");
+                    //loginButton.getUI().ifPresent(ui -> ui.navigate("login"));
+                    Notification.show("Incorrect Username or Password!").addThemeVariants(NotificationVariant.LUMO_ERROR);
                     break;
                 default:
                     break;

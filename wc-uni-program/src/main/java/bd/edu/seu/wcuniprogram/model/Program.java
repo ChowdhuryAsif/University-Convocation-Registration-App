@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Data
@@ -26,10 +27,13 @@ public class Program {
         this.coordinator = coordinator;
     }
 
-    public void addCourse(Course course) {
+    public void addCourse(Course ...course) {
         if (courseList == null)
             courseList = new ArrayList<>();
-        course.setProgram(title);
-        courseList.add(course);
+
+        Arrays.stream(course).forEach(tempCourse -> {
+            tempCourse.setProgram(title);
+            courseList.add(tempCourse);
+        });
     }
 }
