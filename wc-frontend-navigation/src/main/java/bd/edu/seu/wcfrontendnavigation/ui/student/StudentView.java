@@ -53,48 +53,8 @@ public class StudentView extends VerticalLayout {
         else{
             Student loggedStudent = studentService.getStudent(loginToken.getUsername());
 
-            HorizontalLayout horizontalLayout = new HorizontalLayout();
-
-            //SideBar Nav Menu==============
-            Tabs menu = new Tabs();
-            Tab homeTab = new Tab("Home");
-            Tab infoTab = new Tab("Info");
-            Tab paymentTab = new Tab("Payment");
-            menu.add(homeTab, infoTab, paymentTab);
-
-            menu.setOrientation(Tabs.Orientation.VERTICAL);
-            menu.setWidth("200px");
-
-            //ApplicationStatusForm==========
-            FormLayout applicationStatusForm = new FormLayout();
-            TextField userIdField = new TextField("UserId");
-            TextField feesDueField = new TextField("Fees To Pay");
-            TextField feesPayedField = new TextField("Paid");
-            TextField applicationStatusField = new TextField("Status");
-            applicationStatusForm.add(userIdField, feesDueField, feesPayedField, applicationStatusField);
-
-            userIdField.setValue(loggedStudent.getId().toString());
-            feesDueField.setValue("Registration Fee");
-            if(loggedStudent.getFeePaid() != null)
-                feesPayedField.setValue(loggedStudent.getFeePaid().toString().trim());
-            if(loggedStudent.getPaymentStatus() != null)
-                applicationStatusField.setValue(loggedStudent.getPaymentStatus().toString().trim());
-
-            horizontalLayout.add(menu, applicationStatusForm);
-            body.add(horizontalLayout);
-
-            menu.addSelectedChangeListener(menus -> {
-                String tab = menus.getSelectedTab().getLabel();
-                if(tab.equals("Info")){
-                    horizontalLayout.remove(applicationStatusForm);
-                }
-                else if(tab.equals("Payment")){
-                    horizontalLayout.remove(applicationStatusForm);
-                }
-                else {
-                    horizontalLayout.add(applicationStatusForm);
-                }
-            });
+            Container container = new Container(loggedStudent);
+            body.add(container);
         }
 
 

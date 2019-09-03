@@ -30,6 +30,9 @@ public class LoginView extends Dialog {
         TextField username = new TextField("StudentID/Initial", "13 digit id or initial");
         PasswordField passwordField = new PasswordField("Password", "your password");
 
+        username.setRequired(true);
+        passwordField.setRequired(true);
+
         Button loginButton = new Button("Login");
         Button forgotPassButton = new Button("Forgot Password");
         Label statusBar = new Label();
@@ -81,5 +84,6 @@ public class LoginView extends Dialog {
         setWidth("300px");
         add(formLayout);
         open();
+        setCloseOnOutsideClick(false);
     }
 }
