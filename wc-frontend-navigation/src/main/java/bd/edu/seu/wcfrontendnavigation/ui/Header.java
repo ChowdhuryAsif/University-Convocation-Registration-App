@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 public class Header extends HorizontalLayout {
     private LoginToken loginToken;
+    private Label fullNameLabel;
 
     public Header(HttpSession httpSession) {
         super();
@@ -22,19 +23,24 @@ public class Header extends HorizontalLayout {
         if(loginToken == null)
             loginToken = new LoginToken();
 
-
-        Label fullNameLabel = new Label(loginToken.getUsername());
+        fullNameLabel = new Label();
         Div area = new Div();
         area.setWidth("800px");
         Button logoutButton = new Button("Logout", VaadinIcon.EXIT.create());
-        logoutButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
-        logoutButton.addClickListener(event -> logoutButton.getUI().ifPresent(ui -> ui.navigate("login")));
+        logoutButton.addClickListener(event -> {
+            httpSession.removeAttribute("user");
+            logoutButton.getUI().ifPresent(ui -> ui.navigate("login"));
+        });
 
         add(fullNameLabel, area, logoutButton);
     }
 
     public LoginToken getLoginToken() {
-        return loginToken;
+        return this.loginToken;
+    }
+
+    public void setFullNameLabel(String fullName){
+        fullNameLabel.setText(fullName);
     }
 }
