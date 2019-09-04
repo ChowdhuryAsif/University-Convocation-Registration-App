@@ -1,10 +1,12 @@
 package bd.edu.seu.wcfrontendnavigation.ui.hrdeputy;
 
 import bd.edu.seu.wcfrontendnavigation.enums.Role;
+import bd.edu.seu.wcfrontendnavigation.model.Employee;
 import bd.edu.seu.wcfrontendnavigation.model.LoginToken;
-import bd.edu.seu.wcfrontendnavigation.model.Student;
+import bd.edu.seu.wcfrontendnavigation.service.EmployeeService;
 import bd.edu.seu.wcfrontendnavigation.ui.Footer;
 import bd.edu.seu.wcfrontendnavigation.ui.Header;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -16,9 +18,11 @@ import javax.servlet.http.HttpSession;
 public class HRDeputyView extends VerticalLayout {
 
     private LoginToken loginToken;
+    private EmployeeService employeeService;
 
-    public HRDeputyView(HttpSession httpSession) {
+    public HRDeputyView(EmployeeService employeeService, HttpSession httpSession) {
         super();
+        this.employeeService = employeeService;
 
         Header header = new Header(httpSession);
         header.addAttachListener(event -> {
@@ -40,12 +44,15 @@ public class HRDeputyView extends VerticalLayout {
         }
         else{
 
-            Container container = new Container();
+            Container container = new Container(employeeService);
+
             body.add(container);
         }
 
 
-        body.setHeight("460px");
+
+        body.setWidth("800px");
+        //body.setHeight("460px");
 
         Footer footer = new Footer();
 

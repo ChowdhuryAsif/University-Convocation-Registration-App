@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 @Route("student")
 public class StudentView extends VerticalLayout {
 
+
     private StudentService studentService;
     private LoginToken loginToken;
     private Student student;
