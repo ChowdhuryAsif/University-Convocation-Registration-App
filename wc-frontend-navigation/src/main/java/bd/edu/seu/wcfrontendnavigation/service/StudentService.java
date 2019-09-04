@@ -18,6 +18,15 @@ public class StudentService {
     @Value("${studentUrl}/students")
     private String studentUrl;
 
+    public Student insertStudent(Student student){
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<Student> request = new HttpEntity<>(student);
+        ResponseEntity<Student> response = restTemplate
+                .exchange(studentUrl, HttpMethod.POST, request, Student.class);
+
+        return response.getBody();
+    }
+
     public Student getStudent(String id){
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Student> response = restTemplate.exchange(
@@ -33,10 +42,10 @@ public class StudentService {
     public Student updateStudent(Long id, Student student) {
         RestTemplate restTemplate = new RestTemplate();
         String resourceUrl =
-                studentUrl + '/' + id;
+                studentUrl + "/" + id.toString();
         HttpEntity<Student> requestUpdate = new HttpEntity<>(student);
         restTemplate.exchange(resourceUrl, HttpMethod.PUT, requestUpdate, Student.class);
-        return student;
+        return requestUpdate.getBody();
     }
 
 }

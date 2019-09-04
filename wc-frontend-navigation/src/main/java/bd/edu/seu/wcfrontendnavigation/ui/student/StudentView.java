@@ -53,7 +53,7 @@ public class StudentView extends VerticalLayout {
         else{
             Student loggedStudent = studentService.getStudent(loginToken.getUsername());
 
-            Container container = new Container(loggedStudent);
+            Container container = new Container(studentService, loggedStudent);
             body.add(container);
         }
 

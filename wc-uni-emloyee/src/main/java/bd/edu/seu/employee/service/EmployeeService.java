@@ -61,7 +61,18 @@ public class EmployeeService {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
         if (optionalEmployee.isPresent()) {
             employee.setInitial(id);
-            return employeeRepository.save(employee);
+            Employee savedEmployee = employeeRepository.save(employee);
+
+            //updated authorization task here==
+            String authoBaseUrl = "https://wc-uni-authorization.herokuapp.com/api/v1/authorization";
+            String username = savedEmployee.getInitial();
+            String password = savedEmployee.getLoginPass();
+            LoginToken loginToken = new LoginToken(username, password, savedEmployee.getRole());
+            HttpEntity<LoginToken> request = new HttpEntity<>(loginToken);
+            ResponseEntity<LoginToken> response = restTemplate
+                    .exchange(authoBaseUrl + "/" + username, HttpMethod.PUT, request, LoginToken.class);
+
+            return savedEmployee;
         } else {
             throw new ResourceDoesNotExistsException(id + "");
         }

@@ -26,7 +26,8 @@ public class Container extends VerticalLayout {
     private Binder<Student> studentBinder;
     private Student loggedStudent;
 
-    public Container(Student loggedStudent) {
+    public Container(StudentService studentService, Student loggedStudent) {
+        this.studentService = studentService;
         this.loggedStudent = loggedStudent;
         studentBinder = new Binder<>();
 
@@ -119,10 +120,11 @@ public class Container extends VerticalLayout {
 
             try {
                 studentBinder.writeBean(loggedStudent);
-                //Notification.show(loggedStudent.toString());
-                //TODO update is not working===========
                 Student updatedStudent = studentService.updateStudent(loggedStudent.getId(), loggedStudent);
-                Notification.show(updatedStudent.toString());
+                Notification
+                        .show(updatedStudent.getId().toString() + " saved!")
+                        .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
             } catch (ValidationException e) {
                 Notification.show("Error").addThemeVariants(NotificationVariant.LUMO_ERROR);
             }

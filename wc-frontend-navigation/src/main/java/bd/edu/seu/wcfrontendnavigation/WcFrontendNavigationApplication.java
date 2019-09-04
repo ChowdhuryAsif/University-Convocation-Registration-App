@@ -14,11 +14,6 @@ public class WcFrontendNavigationApplication {
         return new RestTemplate();
     }
 
-    @Bean
-    public StudentService getStudentService(){
-        return new StudentService();
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(WcFrontendNavigationApplication.class, args);
     }
