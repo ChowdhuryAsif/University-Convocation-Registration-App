@@ -26,7 +26,7 @@ public class Header extends HorizontalLayout {
         fullNameLabel = new Label();
         Div area = new Div();
         area.setWidth("800px");
-        Button logoutButton = new Button("Logout", VaadinIcon.EXIT.create());
+        Button logoutButton = new Button("Logout", VaadinIcon.SIGN_OUT.create());
 
         logoutButton.addClickListener(event -> {
             httpSession.removeAttribute("user");

@@ -27,10 +27,10 @@ public class LoginView extends Dialog {
         Image logo = new Image();
         logo.setSrc("https://seu.edu.bd/images/logo_1.png");
 
-        TextField username = new TextField("StudentID/Initial", "13 digit id or initial");
+        TextField usernameField = new TextField("StudentID/Initial", "13 digit id or initial");
         PasswordField passwordField = new PasswordField("Password", "your password");
 
-        username.setRequired(true);
+        usernameField.setRequired(true);
         passwordField.setRequired(true);
 
         Button loginButton = new Button("Login");
@@ -42,7 +42,7 @@ public class LoginView extends Dialog {
         loginButton.addClickShortcut(Key.ENTER);
 
         loginButton.addClickListener(event -> {
-            LoginToken loginToken = authenticationService.authenticate(username.getValue(), passwordField.getValue());
+            LoginToken loginToken = authenticationService.authenticate(usernameField.getValue(), passwordField.getValue());
 
             switch (loginToken.getRole()){
                 case STUDENT:
@@ -78,8 +78,11 @@ public class LoginView extends Dialog {
             }
         });
 
+        usernameField.addFocusListener(event -> usernameField.setValue(""));
+        passwordField.addFocusListener(event -> passwordField.setValue(""));
+
         FormLayout formLayout = new FormLayout();
-        formLayout.add(logo, username, passwordField, loginButton, forgotPassButton, statusBar);
+        formLayout.add(logo, usernameField, passwordField, loginButton, forgotPassButton, statusBar);
 
         setWidth("300px");
         add(formLayout);
