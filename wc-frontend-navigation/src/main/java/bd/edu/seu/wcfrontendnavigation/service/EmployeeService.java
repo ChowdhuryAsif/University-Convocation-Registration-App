@@ -25,7 +25,8 @@ public class EmployeeService {
         ResponseEntity<Employee> response = restTemplate
                 .exchange(employeeUrl, HttpMethod.POST, request, Employee.class);
 
-        return response.getBody();
+        Employee responseBody = response.getBody();
+        return responseBody;
     }
 
     public Employee getEmployee(String id){

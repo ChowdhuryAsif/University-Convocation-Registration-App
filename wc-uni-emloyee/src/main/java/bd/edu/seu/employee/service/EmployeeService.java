@@ -8,6 +8,7 @@ import bd.edu.seu.employee.exception.ResourceDoesNotExistsException;
 import bd.edu.seu.employee.model.Employee;
 import bd.edu.seu.employee.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,8 @@ public class EmployeeService {
     @Autowired
     private RestTemplate restTemplate;
     private EmployeeRepository employeeRepository;
+    @Value("${authUrl}/authorization")
+    private  String authUrl;
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
@@ -47,8 +50,8 @@ public class EmployeeService {
         } else {
             Employee savedEmployee = employeeRepository.save(employee);
 
-            String authoBaseUrl = "http://localhost:9035/api/v1/authorization";
-            LoginToken loginToken = new LoginToken(savedEmployee.getInitial(), savedEmployee.getInitial(), savedEmployee.getRole());
+            String authoBaseUrl = authUrl;
+            LoginToken loginToken = new LoginToken(savedEmployee.getInitial(), savedEmployee.getLoginPass(), savedEmployee.getRole());
             HttpEntity<LoginToken> request = new HttpEntity<>(loginToken);
             ResponseEntity<LoginToken> response = restTemplate
                     .exchange(authoBaseUrl, HttpMethod.POST, request, LoginToken.class);
@@ -64,7 +67,7 @@ public class EmployeeService {
             Employee savedEmployee = employeeRepository.save(employee);
 
             //updated authorization task here==
-            String authoBaseUrl = "https://wc-uni-authorization.herokuapp.com/api/v1/authorization";
+            String authoBaseUrl = authUrl;
             String username = savedEmployee.getInitial();
             String password = savedEmployee.getLoginPass();
             LoginToken loginToken = new LoginToken(username, password, savedEmployee.getRole());
