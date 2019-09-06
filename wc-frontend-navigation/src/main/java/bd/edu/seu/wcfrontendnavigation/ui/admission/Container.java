@@ -1,8 +1,11 @@
 package bd.edu.seu.wcfrontendnavigation.ui.admission;
+import bd.edu.seu.wcfrontendnavigation.model.Program;
 import bd.edu.seu.wcfrontendnavigation.model.Student;
+import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
 import bd.edu.seu.wcfrontendnavigation.service.StudentService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -23,6 +26,8 @@ import com.vaadin.flow.data.validator.LongRangeValidator;
 import com.vaadin.flow.data.validator.RegexpValidator;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -30,16 +35,18 @@ import static java.time.temporal.ChronoUnit.DAYS;
 public class Container extends VerticalLayout {
 
     private StudentService studentService;
+    private ProgramService programService;
     private Dialog addStudentDialog;
     private Binder<Student> studentBinder;
     private Pattern pattern;
-    private RegexpValidator regexpValidator;
     private Student globalStudent;
+    private ComboBox<String> programComboBox;
 
 
-    public Container(StudentService studentService) {
+    public Container(ProgramService programService, StudentService studentService) {
         super();
         this.studentService = studentService;
+        this.programService = programService;
         studentBinder = new Binder<>();
         pattern = Pattern.compile("[^A-Za-z ]");
 
@@ -75,13 +82,23 @@ public class Container extends VerticalLayout {
         TextField idField = new TextField("Student ID");
         TextField nameField = new TextField("Full Name");
         EmailField emailField = new EmailField("Email Address");
-        TextField programField = new TextField("Program");
         DatePicker dobField = new DatePicker("Date of Birth");
         DatePicker admissionDateField = new DatePicker("Admission Date");
         TextField loginPassField = new TextField("Initial Login Pass");
-        studentForm.add(idField, nameField, emailField, dobField, programField, admissionDateField, loginPassField);
 
-        bindStudentForm(idField, nameField, emailField, programField, dobField, admissionDateField, loginPassField);
+        programComboBox = new ComboBox<>();
+        programComboBox.setLabel("Program");
+        programComboBox.setPlaceholder("e.i. BSc in CSE");
+
+        List<Program> programList = programService.findAll();
+
+        List<String> programTitleList = new ArrayList<>();
+        programList.forEach(program -> programTitleList.add(program.getTitle()));
+        programComboBox.setItems(programTitleList);
+
+        studentForm.add(idField, nameField, emailField, dobField, admissionDateField, loginPassField, programComboBox);
+
+        bindStudentForm(idField, nameField, emailField, dobField, admissionDateField, loginPassField);
 
         Button closeDialogeButton = new Button("Close", VaadinIcon.CLOSE_CIRCLE.create());
         Button addButton = new Button("Confirm Admision", VaadinIcon.PLUS_CIRCLE_O.create());
@@ -96,13 +113,15 @@ public class Container extends VerticalLayout {
 
         closeDialogeButton.addClickListener(event -> addStudentDialog.close());
 
+        globalStudent = new Student();
+        programComboBox.addValueChangeListener(program -> globalStudent.setProgram(program.getValue()));
         addButton.addClickListener(event -> {
-            globalStudent = new Student();
             try {
                 studentBinder.writeBean(globalStudent);
                 Student insertedStudent = studentService.insertStudent(globalStudent);
                 Notification.show(insertedStudent.getId() + " admitted").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                clearField(idField, nameField, emailField, loginPassField, dobField, admissionDateField, programField);
+                clearField(idField, nameField, emailField, loginPassField, dobField, admissionDateField);
+                programComboBox.clear();
             } catch (ValidationException e) {
                 Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
             } catch (Exception e){
@@ -110,7 +129,7 @@ public class Container extends VerticalLayout {
             }
         });
 
-        resetButton.addClickListener(event -> clearField(idField, nameField, emailField, loginPassField, dobField, admissionDateField, programField));
+        resetButton.addClickListener(event -> clearField(idField, nameField, emailField, loginPassField, dobField, admissionDateField));
 
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.add(studentForm, buttons);
@@ -118,9 +137,8 @@ public class Container extends VerticalLayout {
         return verticalLayout;
     }
 
-    private void clearField(TextField idField, TextField nameField, EmailField emailField, TextField loginPassField, DatePicker dobField, DatePicker admissionDateField, TextField programField) {
+    private void clearField(TextField idField, TextField nameField, EmailField emailField, TextField loginPassField, DatePicker dobField, DatePicker admissionDateField) {
         idField.setValue("");
-        programField.setValue("");
         nameField.setValue("");
         emailField.setValue("");
         dobField.setValue(null);
@@ -128,7 +146,7 @@ public class Container extends VerticalLayout {
         loginPassField.setValue("");
     }
 
-    private void bindStudentForm(TextField idField, TextField nameField, EmailField emailField, TextField programField, DatePicker dobField, DatePicker admissionDateField, TextField loginPassField) {
+    private void bindStudentForm(TextField idField, TextField nameField, EmailField emailField, DatePicker dobField, DatePicker admissionDateField, TextField loginPassField) {
         studentBinder
                 .forField(idField)
                 .asRequired()
@@ -149,11 +167,6 @@ public class Container extends VerticalLayout {
                 .withValidator(email -> email.endsWith(".com"), "email should be like 'example@emple.com'")
                 .withValidator(email -> email.contains("@"), "email should be like 'example@emple.com'")
                 .bind(Student::getEmail, Student::setEmail);
-
-        studentBinder
-                .forField(programField)
-                .asRequired()
-                .bind(Student::getProgram, Student::setProgram);
 
         studentBinder
                 .forField(dobField)

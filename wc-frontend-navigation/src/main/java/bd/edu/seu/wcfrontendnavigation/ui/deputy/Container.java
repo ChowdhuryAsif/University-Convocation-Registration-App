@@ -13,8 +13,13 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -27,6 +32,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToDoubleConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,11 +41,13 @@ public class Container extends VerticalLayout {
     private ProgramService programService;
     private Dialog programDialog;
     private Dialog courseDialog;
+    private Dialog programToCourseDialog;
     private EmployeeService employeeService;
     private Binder<Program> programBinder;
     private Binder<Course> courseBinder;
     private Program globalProgram;
     private Course globalCourse;
+    private Grid<Program> programGrid;
 
 
     public Container(EmployeeService employeeService, ProgramService programService) {
@@ -50,7 +58,7 @@ public class Container extends VerticalLayout {
         programBinder = new Binder<>();
         courseBinder = new Binder<>();
 
-        //HorizontalLayout horizontalLayout = new HorizontalLayout();
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
 
         // Nav Menu==============
         Tabs menu = new Tabs();
@@ -58,6 +66,45 @@ public class Container extends VerticalLayout {
         Tab addProgramTab = new Tab("Add Program");
         Tab addCourseTab = new Tab("Add Course");
         menu.add(homeTab, addProgramTab, addCourseTab);
+        menu.setOrientation(Tabs.Orientation.VERTICAL);
+        menu.setWidth("200px");
+
+        programGrid = new Grid<>();
+        Grid.Column<Program> programTitle = programGrid
+                                                .addColumn(Program::getTitle)
+                                                .setHeader("Program")
+                                                .setTextAlign(ColumnTextAlign.CENTER);
+        Grid.Column<Program> creditRequired = programGrid
+                                                .addColumn(Program::getMinCrReqForGraduation)
+                                                .setHeader("Credit")
+                                                .setTextAlign(ColumnTextAlign.CENTER);
+        Grid.Column<Program> cgpaRequired = programGrid
+                                                .addColumn(Program::getMinReqCgpaForGraduation)
+                                                .setHeader("CGPA")
+                                                .setTextAlign(ColumnTextAlign.CENTER);
+        Grid.Column<Program> coordinator = programGrid
+                                                .addColumn(program -> program.getCoordinator().getName())
+                                                .setHeader("Coordinator")
+                                                .setTextAlign(ColumnTextAlign.CENTER);
+
+        HeaderRow headerRow = programGrid.prependHeaderRow();
+
+        Div requirment = new Div(new Span("Requirment for Graduation"));
+        requirment.getStyle().set("text-align", "center");
+        requirment.setSizeFull();
+        headerRow.join(creditRequired, cgpaRequired).setComponent(requirment);
+
+        programGrid.setWidth("1000px");
+        programGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_COLUMN_BORDERS);
+        programGrid.setItems(programService.findAll());
+
+        programGrid.addItemClickListener(item -> {
+            List<Course> courseList = item.getItem().getCourseList();
+
+            programToCourseDialog = new Dialog();
+            programToCourseDialog.add(openProgramDetails(item.getItem().getTitle(), courseList));
+            programToCourseDialog.open();
+        });
 
 
         programDialog = new Dialog();
@@ -83,8 +130,24 @@ public class Container extends VerticalLayout {
         });
         menu.getStyle().set("alignment", "center");
 
-        add(menu);
+        horizontalLayout.add(menu, programGrid);
+        add(horizontalLayout);
 
+    }
+
+    private Div openProgramDetails(String programTitle, List<Course> courseList) {
+        Div div = new Div();
+        Label programName = new Label();
+        programName.setText("Program: " + programTitle);
+
+        Grid<Course> courseGrid = new Grid<>(Course.class);
+        courseGrid.setItems(courseList);
+        courseGrid.getStyle().set("text-align", "center");
+
+        div.add(programName, courseGrid);
+        div.setWidth("700px");
+
+        return div;
     }
 
     private HorizontalLayout courseForm() {
@@ -111,9 +174,14 @@ public class Container extends VerticalLayout {
 
         ComboBox<String> programComboBox = new ComboBox<>();
         programComboBox.setPlaceholder("Programs");
-        programComboBox.getStyle().set("margin-top", "48px");
+        programComboBox.setRequired(true);
+        programComboBox.setLabel("Programs");
+        programComboBox.getStyle().set("margin-top", "15px");
         List<Program> programList = programService.findAll();
-        programList.forEach(program -> programComboBox.setItems(program.getTitle()));
+
+        List<String> programTitleList = new ArrayList<>();
+        programList.forEach(program -> programTitleList.add(program.getTitle()));
+        programComboBox.setItems(programTitleList);
 
         bindCourseField(codeField, titleField, crHourField);
 
@@ -190,7 +258,9 @@ public class Container extends VerticalLayout {
 
         ComboBox<String> coordinatorComboBox = new ComboBox<>();
         coordinatorComboBox.setPlaceholder("Coordinators");
-        coordinatorComboBox.getStyle().set("margin-top", "48px");
+        coordinatorComboBox.getStyle().set("margin-top", "15px");
+        coordinatorComboBox.setRequired(true);
+        coordinatorComboBox.setLabel("Coordinators");
 
         List<Employee> coordinatorList = employeeService
                                                     .findAll()
@@ -198,7 +268,9 @@ public class Container extends VerticalLayout {
                                                     .filter(predicate -> predicate.getRole().equals(Role.COORDINATOR))
                                                     .collect(Collectors.toList());
 
-        coordinatorList.forEach(employee -> coordinatorComboBox.setItems(employee.getInitial()));
+        List<String> coordinatorInitials = new ArrayList<>();
+        coordinatorList.forEach(coordinator -> coordinatorInitials.add(coordinator.getInitial()));
+        coordinatorComboBox.setItems(coordinatorInitials);
 
         globalProgram = new Program();
         coordinatorComboBox.addValueChangeListener(coordinator -> {
@@ -216,6 +288,7 @@ public class Container extends VerticalLayout {
                 programBinder.writeBean(globalProgram);
                 Program insertedProgram = programService.insertProgram(globalProgram);
                 Notification.show(insertedProgram.getTitle() + " saved.").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                programGrid.setItems(programService.findAll());
             } catch (ValidationException e) {
                 Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
             } catch (Exception e){

@@ -1,7 +1,9 @@
 package bd.edu.seu.wcfrontendnavigation.ui.student;
 
 import bd.edu.seu.wcfrontendnavigation.enums.Status;
+import bd.edu.seu.wcfrontendnavigation.model.Program;
 import bd.edu.seu.wcfrontendnavigation.model.Student;
+import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
 import bd.edu.seu.wcfrontendnavigation.service.StudentService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -18,18 +20,18 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.data.converter.StringToDoubleConverter;
 import com.vaadin.flow.data.converter.StringToLongConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class Container extends VerticalLayout {
 
-    @Autowired
     private StudentService studentService;
+    private ProgramService programService;
     private Binder<Student> studentBinder;
     private Student loggedStudent;
 
-    public Container(StudentService studentService, Student loggedStudent) {
+    public Container(ProgramService programService, StudentService studentService, Student loggedStudent) {
         this.studentService = studentService;
         this.loggedStudent = loggedStudent;
+        this.programService = programService;
         studentBinder = new Binder<>();
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
@@ -37,8 +39,8 @@ public class Container extends VerticalLayout {
         //SideBar Nav Menu==============
         Tabs menu = new Tabs();
         Tab homeTab = new Tab("Home");
-        Tab infoTab = new Tab("Info");
-        Tab paymentTab = new Tab("Payment");
+        Tab infoTab = new Tab("Update Into");
+        Tab paymentTab = new Tab("Convocation");
         menu.add(homeTab, infoTab, paymentTab);
 
         menu.setOrientation(Tabs.Orientation.VERTICAL);
@@ -63,7 +65,9 @@ public class Container extends VerticalLayout {
         feesDueField.setValue("6500");              //hardcoded for demonstration purpose =============
         if(loggedStudent.getFeePaid() != null)
             feesPayedField.setValue(loggedStudent.getFeePaid().toString().trim());
-        if(loggedStudent.getFeePaid().equals(Double.parseDouble(feesDueField.getValue()))){
+        if(loggedStudent.getFeePaid() != null && loggedStudent.getFeePaid().equals(Double.parseDouble(feesDueField.getValue()))){
+            loggedStudent.setPaymentStatus(Status.ACCEPTED);
+            studentService.updateStudent(loggedStudent.getId(), loggedStudent);
             applicationStatusField.setValue(Status.ACCEPTED.toString());
         }
         else{
@@ -142,13 +146,25 @@ public class Container extends VerticalLayout {
 
         menu.addSelectedChangeListener(menus -> {
             String tab = menus.getSelectedTab().getLabel();
-            if(tab.equals("Info")){
+            if(tab.equals("Update Into")){
                 horizontalLayout.remove(applicationStatusForm);
                 horizontalLayout.remove(paymentDetailsForm);
             }
-            else if(tab.equals("Payment")){
-                horizontalLayout.remove(applicationStatusForm);
-                horizontalLayout.add(paymentDetailsForm);
+            else if(tab.equals("Convocation")){
+
+                Program program = programService.getProgram(loggedStudent.getProgram());
+                double cgReq = program.getMinReqCgpaForGraduation();
+                double crReq = program.getMinCrReqForGraduation();
+
+                if( loggedStudent.getCrCompleted() != null && loggedStudent.getCgpa() != null && loggedStudent.getCgpa() >= cgReq && loggedStudent.getCrCompleted() >= crReq) {
+                    horizontalLayout.remove(applicationStatusForm);
+                    horizontalLayout.add(paymentDetailsForm);
+                }
+                else{
+                    Notification.show("You are not eligible to register for Convocation").addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    horizontalLayout.remove(paymentDetailsForm);
+                    horizontalLayout.add(applicationStatusForm);
+                }
             }
             else {
                 horizontalLayout.remove(paymentDetailsForm);

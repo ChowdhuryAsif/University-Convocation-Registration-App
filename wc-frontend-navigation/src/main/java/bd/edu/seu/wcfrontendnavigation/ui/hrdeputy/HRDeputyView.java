@@ -38,7 +38,7 @@ public class HRDeputyView extends VerticalLayout {
         Div body = new Div();
 
         loginToken = (LoginToken) httpSession.getAttribute("user");
-        if(loginToken == null){
+        if(loginToken == null || !loginToken.getRole().equals(Role.HR_DEPUTY_REGISTRAR)){
             httpSession.removeAttribute("user");
             header.getUI().ifPresent(ui -> ui.navigate("login"));
         }

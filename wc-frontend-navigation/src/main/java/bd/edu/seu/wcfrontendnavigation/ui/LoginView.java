@@ -63,7 +63,7 @@ public class LoginView extends Dialog {
                     break;
                 case EXAM_OFFICER:
                     httpSession.setAttribute("user", loginToken);
-                    loginButton.getUI().ifPresent(ui -> ui.navigate("login"));
+                    loginButton.getUI().ifPresent(ui -> ui.navigate("exam-officer"));
                     break;
                 case DEPUTY_REGISTRAR:
                     httpSession.setAttribute("user", loginToken);

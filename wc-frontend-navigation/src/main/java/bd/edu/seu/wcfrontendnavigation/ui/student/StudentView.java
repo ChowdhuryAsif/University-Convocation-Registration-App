@@ -3,6 +3,7 @@ package bd.edu.seu.wcfrontendnavigation.ui.student;
 import bd.edu.seu.wcfrontendnavigation.enums.Role;
 import bd.edu.seu.wcfrontendnavigation.model.LoginToken;
 import bd.edu.seu.wcfrontendnavigation.model.Student;
+import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
 import bd.edu.seu.wcfrontendnavigation.service.StudentService;
 import bd.edu.seu.wcfrontendnavigation.ui.Footer;
 import bd.edu.seu.wcfrontendnavigation.ui.Header;
@@ -20,41 +21,40 @@ import javax.servlet.http.HttpSession;
 @Route("student")
 public class StudentView extends VerticalLayout {
 
-
+    private ProgramService programService;
     private StudentService studentService;
     private LoginToken loginToken;
     private Student student;
 
-    public StudentView(StudentService studentService, HttpSession httpSession) {
+    public StudentView(ProgramService programService, StudentService studentService, HttpSession httpSession) {
         super();
         this.studentService = studentService;
+        this.programService = programService;
 
 
         Header header = new Header(httpSession);
 
         header.addAttachListener(event -> {
             loginToken = header.getLoginToken();
-            if(!loginToken.getRole().equals(Role.STUDENT) || loginToken == null){
+            if(!loginToken.getRole().equals(Role.STUDENT)){
                 httpSession.removeAttribute("user");
                 header.getUI().ifPresent(ui -> ui.navigate("login"));
-            }
-            else{
-                student = studentService.getStudent(loginToken.getUsername());
-                header.setFullNameLabel(this.student.getName());
             }
         });
 
         Div body = new Div();
 
         loginToken = (LoginToken) httpSession.getAttribute("user");
-        if(loginToken == null){
+        if(loginToken == null || !loginToken.getRole().equals(Role.STUDENT)){
             httpSession.removeAttribute("user");
             header.getUI().ifPresent(ui -> ui.navigate("login"));
         }
         else{
+            student = studentService.getStudent(loginToken.getUsername());
+            header.setFullNameLabel(this.student.getName());
             Student loggedStudent = studentService.getStudent(loginToken.getUsername());
 
-            Container container = new Container(studentService, loggedStudent);
+            Container container = new Container(programService, studentService, loggedStudent);
             body.add(container);
         }
 
