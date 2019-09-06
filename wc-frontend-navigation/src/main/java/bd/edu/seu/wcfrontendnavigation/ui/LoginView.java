@@ -25,7 +25,7 @@ public class LoginView extends Dialog {
         super();
 
         Image logo = new Image();
-        logo.setSrc("https://seu.edu.bd/images/logo_1.png");
+        logo.setSrc("https://i.paste.pics/6mnqx.png");
 
         TextField usernameField = new TextField("StudentID/Initial", "13 digit id or initial");
         PasswordField passwordField = new PasswordField("Password", "your password");
