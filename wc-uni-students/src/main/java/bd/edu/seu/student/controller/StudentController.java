@@ -20,13 +20,13 @@ public class StudentController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Student>> getStudentes() {
+    public ResponseEntity<List<Student>> findAll() {
         List<Student> studentList = studentService.findAll();
         return ResponseEntity.ok(studentList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable Long id) {
+    public ResponseEntity<Student> findById(@PathVariable Long id) {
         try {
             Student student = studentService.findById(id);
             return ResponseEntity.ok(student);
@@ -48,7 +48,7 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<Long> deleteById(@PathVariable Long id) {
         try {
             Boolean deleteByid = studentService.deleteByid(id);
             return ResponseEntity.ok(id);

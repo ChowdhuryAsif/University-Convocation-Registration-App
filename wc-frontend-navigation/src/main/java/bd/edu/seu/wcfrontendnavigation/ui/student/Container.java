@@ -1,5 +1,6 @@
 package bd.edu.seu.wcfrontendnavigation.ui.student;
 
+import bd.edu.seu.wcfrontendnavigation.enums.Status;
 import bd.edu.seu.wcfrontendnavigation.model.Student;
 import bd.edu.seu.wcfrontendnavigation.service.StudentService;
 import com.vaadin.flow.component.button.Button;
@@ -59,11 +60,17 @@ public class Container extends VerticalLayout {
 
 
         userIdField.setValue(loggedStudent.getId().toString());
-        feesDueField.setValue("Registration Fee");
+        feesDueField.setValue("6500");              //hardcoded for demonstration purpose =============
         if(loggedStudent.getFeePaid() != null)
             feesPayedField.setValue(loggedStudent.getFeePaid().toString().trim());
-        if(loggedStudent.getPaymentStatus() != null)
-            applicationStatusField.setValue(loggedStudent.getPaymentStatus().toString().trim());
+        if(loggedStudent.getFeePaid().equals(Double.parseDouble(feesDueField.getValue()))){
+            applicationStatusField.setValue(Status.ACCEPTED.toString());
+        }
+        else{
+            applicationStatusField.setValue(Status.NOT_PAID.toString());
+
+            // this feature needs to be update in future ============
+        }
 
         //End of home page==============
 
@@ -111,6 +118,7 @@ public class Container extends VerticalLayout {
                 .bind(Student::getEmail, Student::setEmail);
 
 
+
         Div area = new Div();
         area.setWidth("200px");
         horizontalLayout.add(menu, area, applicationStatusForm);
@@ -121,6 +129,8 @@ public class Container extends VerticalLayout {
             try {
                 studentBinder.writeBean(loggedStudent);
                 Student updatedStudent = studentService.updateStudent(loggedStudent.getId(), loggedStudent);
+
+
                 Notification
                         .show(updatedStudent.getId().toString() + " saved!")
                         .addThemeVariants(NotificationVariant.LUMO_SUCCESS);

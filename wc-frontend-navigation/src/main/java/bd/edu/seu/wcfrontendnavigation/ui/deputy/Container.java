@@ -52,7 +52,7 @@ public class Container extends VerticalLayout {
 
         //HorizontalLayout horizontalLayout = new HorizontalLayout();
 
-        //SideBar Nav Menu==============
+        // Nav Menu==============
         Tabs menu = new Tabs();
         Tab homeTab = new Tab("Home");
         Tab addProgramTab = new Tab("Add Program");
