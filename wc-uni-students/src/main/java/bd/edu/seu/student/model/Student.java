@@ -45,15 +45,15 @@ public class Student {
         this.program = program;
     }
 
-    public void registerCourse(Course ... courses){
-        if(coursList == null)
+    public void registerCourse(Course... courses) {
+        if (coursList == null)
             coursList = new ArrayList<>();
 
         Arrays.stream(courses).forEach(course -> coursList.add(course));
     }
 
-    public void gradeCourse(Grade ... grades){
-        if(gradeList == null)
+    public void gradeCourse(Grade... grades) {
+        if (gradeList == null)
             gradeList = new ArrayList<>();
 
         Arrays.stream(grades).forEach(grade -> gradeList.add(grade));

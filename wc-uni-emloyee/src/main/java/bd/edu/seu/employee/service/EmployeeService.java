@@ -24,7 +24,7 @@ public class EmployeeService {
     private RestTemplate restTemplate;
     private EmployeeRepository employeeRepository;
     @Value("${authUrl}/authorization")
-    private  String authUrl;
+    private String authUrl;
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;

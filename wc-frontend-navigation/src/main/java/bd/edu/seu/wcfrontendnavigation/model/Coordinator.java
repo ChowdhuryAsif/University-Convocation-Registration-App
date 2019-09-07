@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Coordinator{
+public class Coordinator {
     private String initial;
     private String name;
     private String loginPass;

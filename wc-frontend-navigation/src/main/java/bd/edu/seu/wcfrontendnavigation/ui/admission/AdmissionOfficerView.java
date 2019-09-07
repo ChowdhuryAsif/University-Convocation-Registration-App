@@ -18,6 +18,7 @@ public class AdmissionOfficerView extends VerticalLayout {
     private LoginToken loginToken;
     private StudentService studentService;
     private ProgramService programService;
+
     public AdmissionOfficerView(ProgramService programService, StudentService studentService, HttpSession httpSession) {
         super();
         this.studentService = studentService;
@@ -26,11 +27,10 @@ public class AdmissionOfficerView extends VerticalLayout {
         Header header = new Header(httpSession);
         header.addAttachListener(event -> {
             LoginToken loginToken = header.getLoginToken();
-            if(!loginToken.getRole().equals(Role.ADMISSION_OFFICER)){
+            if (!loginToken.getRole().equals(Role.ADMISSION_OFFICER)) {
                 httpSession.removeAttribute("user");
                 header.getUI().ifPresent(ui -> ui.navigate("login"));
-            }
-            else{
+            } else {
                 header.setFullNameLabel("Admission Officer");
             }
         });
@@ -38,17 +38,15 @@ public class AdmissionOfficerView extends VerticalLayout {
         Div body = new Div();
 
         loginToken = (LoginToken) httpSession.getAttribute("user");
-        if(loginToken == null || !loginToken.getRole().equals(Role.ADMISSION_OFFICER)){
+        if (loginToken == null || !loginToken.getRole().equals(Role.ADMISSION_OFFICER)) {
             httpSession.removeAttribute("user");
             header.getUI().ifPresent(ui -> ui.navigate("login"));
-        }
-        else{
+        } else {
 
             Container container = new Container(programService, studentService);
 
             body.add(container);
         }
-
 
 
         body.setWidth("800px");

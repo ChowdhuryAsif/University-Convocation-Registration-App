@@ -27,11 +27,10 @@ public class DeputyRegistrarView extends VerticalLayout {
         Header header = new Header(httpSession);
         header.addAttachListener(event -> {
             LoginToken loginToken = header.getLoginToken();
-            if(!loginToken.getRole().equals(Role.DEPUTY_REGISTRAR)){
+            if (!loginToken.getRole().equals(Role.DEPUTY_REGISTRAR)) {
                 httpSession.removeAttribute("user");
                 header.getUI().ifPresent(ui -> ui.navigate("login"));
-            }
-            else{
+            } else {
                 header.setFullNameLabel("Deputy Registrar");
             }
         });
@@ -39,17 +38,15 @@ public class DeputyRegistrarView extends VerticalLayout {
         Div body = new Div();
 
         loginToken = (LoginToken) httpSession.getAttribute("user");
-        if(loginToken == null || !loginToken.getRole().equals(Role.DEPUTY_REGISTRAR)){
+        if (loginToken == null || !loginToken.getRole().equals(Role.DEPUTY_REGISTRAR)) {
             httpSession.removeAttribute("user");
             header.getUI().ifPresent(ui -> ui.navigate("login"));
-        }
-        else{
+        } else {
 
             Container container = new Container(employeeService, programService);
 
             body.add(container);
         }
-
 
 
         body.setWidth("800px");

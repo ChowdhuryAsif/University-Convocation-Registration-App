@@ -2,9 +2,7 @@ package bd.edu.seu.wcfrontendnavigation.ui.examofficer;
 
 import bd.edu.seu.wcfrontendnavigation.model.*;
 import bd.edu.seu.wcfrontendnavigation.service.EmployeeService;
-import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
 import bd.edu.seu.wcfrontendnavigation.service.StudentService;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -19,9 +17,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.component.textfield.TextField;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Container extends VerticalLayout {
@@ -72,9 +70,10 @@ public class Container extends VerticalLayout {
 
         studentGrid.setWidth("800px");
 
-        studentGrid.setItems(studentService.findAll().stream().filter(student -> student.getProgram().equals(loggedEmployee.getProgram())));
+        studentGrid.setItems(studentService.findAll().stream().filter(student -> student.getProgram().equals(loggedEmployee.getProgram())).collect(Collectors.toList()));
 
         horizontalLayout.add(menu, studentGrid);
+
         add(horizontalLayout);
 
     }
@@ -83,7 +82,7 @@ public class Container extends VerticalLayout {
         globalStudent = student;
         courseGradeDialog = new Dialog();
         globalGrade = new Grade();
-        
+
         List<Course> registeredCourseList = globalStudent.getCoursList();
 
         Div gridArea = new Div();
@@ -92,21 +91,40 @@ public class Container extends VerticalLayout {
         courseGrid.setItems(registeredCourseList);
         gridArea.add(courseGrid);
         gridArea.setWidth("800px");
-        
+
 
         ComboBox<Double> gradeComboBox = new ComboBox<>();
         gradeComboBox.setItems(4.0, 3.75, 3.50, 3.25, 3.00, 2.75, 2.50, 2.25, 2.00);
         gradeComboBox.setRequired(true);
         gradeComboBox.setLabel("Grade");
+        gradeComboBox.setPlaceholder("e.i 3.50");
         gradeComboBox.getStyle().set("margin-top", "15px");
-        
+
 
         Button closeDialogeButton = new Button("Close", VaadinIcon.CLOSE_CIRCLE.create());
         Button gradeCourseButton = new Button("Confirm", VaadinIcon.CHECK_SQUARE_O.create());
         gradeCourseButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         gradeCourseButton.getStyle().set("background-color", "#34c65d");
 
-        courseGrid.addItemClickListener(course -> globalGrade.setCourse(course.getItem()));
+        globalGrade = new Grade();
+        courseGrid.addItemClickListener(course -> {
+            globalGrade.setCourse(course.getItem());
+
+            Student serviceStudent = studentService.getStudent(globalStudent.getId().toString());
+            List<Grade> gradeListOfServiceStudent = serviceStudent.getGradeList();
+
+            boolean gradedCase = false;
+            for (int i = 0; i < gradeListOfServiceStudent.size(); i++) {
+                if (gradeListOfServiceStudent.get(i).getCourse().getCode().equals(globalGrade.getCourse().getCode())) {
+                    gradedCase = true;
+                    gradeComboBox.setValue(gradeListOfServiceStudent.get(i).getGrade());
+
+                }
+            }
+            if (!gradedCase)
+                gradeComboBox.setValue(null);
+
+        });
         gradeComboBox.addValueChangeListener(value -> globalGrade.setGrade(value.getValue()));
 
         HorizontalLayout buttons = new HorizontalLayout();
@@ -139,9 +157,10 @@ public class Container extends VerticalLayout {
             credit += tempGrade.getCourse().getCreditHour();
         });
 
-        Double cgpa = creditHour/credit;
+        Double cgpa = creditHour / credit;
         serviceStudent.setCgpa(cgpa);
         serviceStudent.setCrCompleted(credit);
+
 
         Student updatedStudent = studentService.updateStudent(serviceStudent.getId(), serviceStudent);
 

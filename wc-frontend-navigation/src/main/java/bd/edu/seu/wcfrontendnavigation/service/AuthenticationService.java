@@ -16,7 +16,7 @@ public class AuthenticationService {
     @Value("${authUrl}/authorization")
     private String baseUrlAuth;
 
-    public LoginToken authenticate(String username, String password){
+    public LoginToken authenticate(String username, String password) {
         ResponseEntity<LoginToken> responseEntity = restTemplate.exchange(
                 baseUrlAuth + "/" + username,
                 HttpMethod.GET,
@@ -26,7 +26,7 @@ public class AuthenticationService {
         LoginToken entityBody = responseEntity.getBody();
 
         String exactPass = entityBody.getPassword();
-        if(exactPass == null || !exactPass.equals(password))
+        if (exactPass == null || !exactPass.equals(password))
             return new LoginToken(null, null, Role.NO_ROLE);
         else
             return new LoginToken(entityBody.getUsername(), entityBody.getPassword(), entityBody.getRole());

@@ -1,6 +1,6 @@
 package bd.edu.seu.wcfrontendnavigation.ui.coordinator;
 
-import bd.edu.seu.wcfrontendnavigation.enums.Role;
+
 import bd.edu.seu.wcfrontendnavigation.model.*;
 import bd.edu.seu.wcfrontendnavigation.service.EmployeeService;
 import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
@@ -8,9 +8,7 @@ import bd.edu.seu.wcfrontendnavigation.service.StudentService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
@@ -19,11 +17,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,7 +28,7 @@ public class Container extends VerticalLayout {
     private EmployeeService employeeService;
     private ProgramService programService;
     private StudentService studentService;
-    private ComboBox<String> programComboBox;
+    private Course globalCourse;
     private Employee loggedCoordinator;
     private Dialog courseRegistrationDialog;
 
@@ -93,7 +87,23 @@ public class Container extends VerticalLayout {
         registerButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         registerButton.getStyle().set("background-color", "#34c65d");
 
-        courseGrid.addItemClickListener(item -> globalStudent.registerCourse(item.getItem()));
+        globalCourse = new Course();
+        courseGrid.addItemClickListener(item -> {
+            globalCourse.setCode(item.getItem().getCode());
+            globalCourse.setTitle(item.getItem().getTitle());
+            globalCourse.setProgram(item.getItem().getProgram());
+            globalCourse.setCreditHour(item.getItem().getCreditHour());
+
+            Student serviceStudent = studentService.getStudent(globalStudent.getId().toString());
+            List<Course> serviceStudentCoursList = serviceStudent.getCoursList();
+
+            for (int i = 0; i < serviceStudentCoursList.size(); i++) {
+                if (serviceStudentCoursList.get(i).getCode().equals(globalCourse.getCode())) {
+                    Notification.show(globalStudent.getId() + " already registered in " + globalCourse.getCode());
+                }
+            }
+
+        });
 
         HorizontalLayout buttons = new HorizontalLayout();
         buttons.add(closeDialogeButton, registerButton);
@@ -102,7 +112,9 @@ public class Container extends VerticalLayout {
         closeDialogeButton.addClickListener(clickEvent -> courseRegistrationDialog.close());
 
         registerButton.addClickListener(event -> {
-            studentService.updateStudent(globalStudent.getId(), globalStudent);
+            Student serviceStudent = studentService.getStudent(globalStudent.getId().toString());
+            serviceStudent.registerCourse(globalCourse);
+            studentService.updateStudent(serviceStudent.getId(), serviceStudent);
             Notification.show("Registered!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         });
 

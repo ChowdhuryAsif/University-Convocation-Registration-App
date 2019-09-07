@@ -1,6 +1,5 @@
 package bd.edu.seu.wcfrontendnavigation.service;
 
-import bd.edu.seu.wcfrontendnavigation.model.Program;
 import bd.edu.seu.wcfrontendnavigation.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +20,7 @@ public class StudentService {
     @Value("${studentUrl}/students")
     private String studentUrl;
 
-    public Student insertStudent(Student student){
+    public Student insertStudent(Student student) {
         HttpEntity<Student> request = new HttpEntity<>(student);
         ResponseEntity<Student> response = restTemplate
                 .exchange(studentUrl, HttpMethod.POST, request, Student.class);
@@ -29,7 +28,7 @@ public class StudentService {
         return response.getBody();
     }
 
-    public Student getStudent(String id){
+    public Student getStudent(String id) {
         ResponseEntity<Student> response = restTemplate.exchange(
                 studentUrl + "/" + id,
                 HttpMethod.GET,
@@ -47,12 +46,13 @@ public class StudentService {
         return requestUpdate.getBody();
     }
 
-    public List<Student> findAll(){
+    public List<Student> findAll() {
         ResponseEntity<List<Student>> response = restTemplate.exchange(
                 studentUrl,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Student>>(){});
+                new ParameterizedTypeReference<List<Student>>() {
+                });
         List<Student> studentList = response.getBody();
 
         return studentList;

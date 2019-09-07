@@ -7,7 +7,6 @@ import bd.edu.seu.wcfrontendnavigation.model.Employee;
 import bd.edu.seu.wcfrontendnavigation.model.Program;
 import bd.edu.seu.wcfrontendnavigation.service.EmployeeService;
 import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -71,21 +70,21 @@ public class Container extends VerticalLayout {
 
         programGrid = new Grid<>();
         Grid.Column<Program> programTitle = programGrid
-                                                .addColumn(Program::getTitle)
-                                                .setHeader("Program")
-                                                .setTextAlign(ColumnTextAlign.CENTER);
+                .addColumn(Program::getTitle)
+                .setHeader("Program")
+                .setTextAlign(ColumnTextAlign.CENTER);
         Grid.Column<Program> creditRequired = programGrid
-                                                .addColumn(Program::getMinCrReqForGraduation)
-                                                .setHeader("Credit")
-                                                .setTextAlign(ColumnTextAlign.CENTER);
+                .addColumn(Program::getMinCrReqForGraduation)
+                .setHeader("Credit")
+                .setTextAlign(ColumnTextAlign.CENTER);
         Grid.Column<Program> cgpaRequired = programGrid
-                                                .addColumn(Program::getMinReqCgpaForGraduation)
-                                                .setHeader("CGPA")
-                                                .setTextAlign(ColumnTextAlign.CENTER);
+                .addColumn(Program::getMinReqCgpaForGraduation)
+                .setHeader("CGPA")
+                .setTextAlign(ColumnTextAlign.CENTER);
         Grid.Column<Program> coordinator = programGrid
-                                                .addColumn(program -> program.getCoordinator().getName())
-                                                .setHeader("Coordinator")
-                                                .setTextAlign(ColumnTextAlign.CENTER);
+                .addColumn(program -> program.getCoordinator().getName())
+                .setHeader("Coordinator")
+                .setTextAlign(ColumnTextAlign.CENTER);
 
         HeaderRow headerRow = programGrid.prependHeaderRow();
 
@@ -116,15 +115,13 @@ public class Container extends VerticalLayout {
 
         menu.addSelectedChangeListener(menus -> {
             String tab = menus.getSelectedTab().getLabel();
-            if(tab.equals("Add Program")){
+            if (tab.equals("Add Program")) {
                 programDialog.open();
                 programDialog.setCloseOnOutsideClick(false);
-            }
-            else if(tab.equals("Add Course")){
+            } else if (tab.equals("Add Course")) {
                 courseDialog.open();
                 courseDialog.setCloseOnOutsideClick(false);
-            }
-            else {
+            } else {
 
             }
         });
@@ -197,7 +194,7 @@ public class Container extends VerticalLayout {
                 Notification.show(globalCourse.getCode() + " added").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             } catch (ValidationException e) {
                 Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
-            } catch (Exception e){
+            } catch (Exception e) {
                 Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
 
@@ -229,7 +226,7 @@ public class Container extends VerticalLayout {
                 .bind(Course::getCreditHour, Course::setCreditHour);
     }
 
-    public HorizontalLayout programForm(){
+    public HorizontalLayout programForm() {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
 
         VerticalLayout verticalLayout = new VerticalLayout();
@@ -263,10 +260,10 @@ public class Container extends VerticalLayout {
         coordinatorComboBox.setLabel("Coordinators");
 
         List<Employee> coordinatorList = employeeService
-                                                    .findAll()
-                                                    .stream()
-                                                    .filter(predicate -> predicate.getRole().equals(Role.COORDINATOR))
-                                                    .collect(Collectors.toList());
+                .findAll()
+                .stream()
+                .filter(predicate -> predicate.getRole().equals(Role.COORDINATOR))
+                .collect(Collectors.toList());
 
         List<String> coordinatorInitials = new ArrayList<>();
         coordinatorList.forEach(coordinator -> coordinatorInitials.add(coordinator.getInitial()));
@@ -291,7 +288,7 @@ public class Container extends VerticalLayout {
                 programGrid.setItems(programService.findAll());
             } catch (ValidationException e) {
                 Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
-            } catch (Exception e){
+            } catch (Exception e) {
                 Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
         });

@@ -17,29 +17,29 @@ public class AuthorizationService {
         this.authorizationRepository = authorizationRepository;
     }
 
-    public LoginToken insert(LoginToken loginToken){
+    public LoginToken insert(LoginToken loginToken) {
         LoginToken token = authorizationRepository.insert(loginToken);
         return token;
     }
 
-    public List<LoginToken> findAll(){
+    public List<LoginToken> findAll() {
         List<LoginToken> loginTokenList = authorizationRepository.findAll();
         return loginTokenList;
     }
 
-    public LoginToken findById(String id){
+    public LoginToken findById(String id) {
         Optional<LoginToken> optionalLoginToken = authorizationRepository.findById(id);
-        if(optionalLoginToken.isPresent())
+        if (optionalLoginToken.isPresent())
             return optionalLoginToken.get();
         else
             return new LoginToken(null, null, Role.NO_ROLE);
     }
 
-    public void deleteById(String id){
+    public void deleteById(String id) {
         authorizationRepository.deleteById(id);
     }
 
-    public LoginToken update(String id, LoginToken loginToken){
+    public LoginToken update(String id, LoginToken loginToken) {
         Optional<LoginToken> optionalLoginToken = authorizationRepository.findById(id);
 
         loginToken.setUsername(id);

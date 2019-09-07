@@ -7,13 +7,8 @@ import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
 import bd.edu.seu.wcfrontendnavigation.service.StudentService;
 import bd.edu.seu.wcfrontendnavigation.ui.Footer;
 import bd.edu.seu.wcfrontendnavigation.ui.Header;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
 import javax.servlet.http.HttpSession;
@@ -36,7 +31,7 @@ public class StudentView extends VerticalLayout {
 
         header.addAttachListener(event -> {
             loginToken = header.getLoginToken();
-            if(!loginToken.getRole().equals(Role.STUDENT)){
+            if (!loginToken.getRole().equals(Role.STUDENT)) {
                 httpSession.removeAttribute("user");
                 header.getUI().ifPresent(ui -> ui.navigate("login"));
             }
@@ -45,11 +40,10 @@ public class StudentView extends VerticalLayout {
         Div body = new Div();
 
         loginToken = (LoginToken) httpSession.getAttribute("user");
-        if(loginToken == null || !loginToken.getRole().equals(Role.STUDENT)){
+        if (loginToken == null || !loginToken.getRole().equals(Role.STUDENT)) {
             httpSession.removeAttribute("user");
             header.getUI().ifPresent(ui -> ui.navigate("login"));
-        }
-        else{
+        } else {
             student = studentService.getStudent(loginToken.getUsername());
             header.setFullNameLabel(this.student.getName());
             Student loggedStudent = studentService.getStudent(loginToken.getUsername());

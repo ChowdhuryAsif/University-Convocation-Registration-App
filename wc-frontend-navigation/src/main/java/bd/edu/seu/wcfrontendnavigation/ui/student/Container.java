@@ -1,10 +1,8 @@
 package bd.edu.seu.wcfrontendnavigation.ui.student;
 
 import bd.edu.seu.wcfrontendnavigation.enums.Status;
-import bd.edu.seu.wcfrontendnavigation.model.Employee;
 import bd.edu.seu.wcfrontendnavigation.model.Program;
 import bd.edu.seu.wcfrontendnavigation.model.Student;
-import bd.edu.seu.wcfrontendnavigation.service.EmployeeService;
 import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
 import bd.edu.seu.wcfrontendnavigation.service.StudentService;
 import com.vaadin.flow.component.button.Button;
@@ -65,14 +63,13 @@ public class Container extends VerticalLayout {
 
         userIdField.setValue(loggedStudent.getId().toString());
         feesDueField.setValue("6500");              //hardcoded for demonstration purpose =============
-        if(loggedStudent.getFeePaid() != null)
+        if (loggedStudent.getFeePaid() != null)
             feesPayedField.setValue(loggedStudent.getFeePaid().toString().trim());
-        if(loggedStudent.getFeePaid() != null && loggedStudent.getFeePaid().equals(Double.parseDouble(feesDueField.getValue()))){
+        if (loggedStudent.getFeePaid() != null && loggedStudent.getFeePaid().equals(Double.parseDouble(feesDueField.getValue()))) {
             loggedStudent.setPaymentStatus(Status.ACCEPTED);
             studentService.updateStudent(loggedStudent.getId(), loggedStudent);
             applicationStatusField.setValue(Status.ACCEPTED.toString());
-        }
-        else{
+        } else {
             applicationStatusField.setValue(Status.NOT_PAID.toString());
 
             // this feature needs to be update in future ============
@@ -124,7 +121,6 @@ public class Container extends VerticalLayout {
                 .bind(Student::getEmail, Student::setEmail);
 
 
-
         Div area = new Div();
         area.setWidth("200px");
         horizontalLayout.add(menu, area, applicationStatusForm);
@@ -148,27 +144,24 @@ public class Container extends VerticalLayout {
 
         menu.addSelectedChangeListener(menus -> {
             String tab = menus.getSelectedTab().getLabel();
-            if(tab.equals("Update Into")){
+            if (tab.equals("Update Into")) {
                 horizontalLayout.remove(applicationStatusForm);
                 horizontalLayout.remove(paymentDetailsForm);
-            }
-            else if(tab.equals("Convocation")){
+            } else if (tab.equals("Convocation")) {
 
                 Program program = programService.getProgram(loggedStudent.getProgram());
                 double cgReq = program.getMinReqCgpaForGraduation();
                 double crReq = program.getMinCrReqForGraduation();
 
-                if( loggedStudent.getCrCompleted() != null && loggedStudent.getCgpa() != null && loggedStudent.getCgpa() >= cgReq && loggedStudent.getCrCompleted() >= crReq) {
+                if (loggedStudent.getCrCompleted() != null && loggedStudent.getCgpa() != null && loggedStudent.getCgpa() >= cgReq && loggedStudent.getCrCompleted() >= crReq) {
                     horizontalLayout.remove(applicationStatusForm);
                     horizontalLayout.add(paymentDetailsForm);
-                }
-                else{
+                } else {
                     Notification.show("You are not eligible to register for Convocation").addThemeVariants(NotificationVariant.LUMO_ERROR);
                     horizontalLayout.remove(paymentDetailsForm);
                     horizontalLayout.add(applicationStatusForm);
                 }
-            }
-            else {
+            } else {
                 horizontalLayout.remove(paymentDetailsForm);
                 horizontalLayout.add(applicationStatusForm);
             }

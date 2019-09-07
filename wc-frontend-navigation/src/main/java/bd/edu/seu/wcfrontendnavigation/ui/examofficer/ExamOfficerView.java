@@ -29,11 +29,10 @@ public class ExamOfficerView extends VerticalLayout {
 
         header.addAttachListener(event -> {
             loginToken = header.getLoginToken();
-            if(!loginToken.getRole().equals(Role.EXAM_OFFICER) || loginToken == null){
+            if (!loginToken.getRole().equals(Role.EXAM_OFFICER) || loginToken == null) {
                 httpSession.removeAttribute("user");
                 header.getUI().ifPresent(ui -> ui.navigate("login"));
-            }
-            else{
+            } else {
                 header.setFullNameLabel("Welcome, Exam Officer");
             }
         });
@@ -41,11 +40,10 @@ public class ExamOfficerView extends VerticalLayout {
         Div body = new Div();
 
         loginToken = (LoginToken) httpSession.getAttribute("user");
-        if(loginToken == null || !loginToken.getRole().equals(Role.EXAM_OFFICER)){
+        if (loginToken == null || !loginToken.getRole().equals(Role.EXAM_OFFICER)) {
             httpSession.removeAttribute("user");
             header.getUI().ifPresent(ui -> ui.navigate("login"));
-        }
-        else{
+        } else {
 
             String username = loginToken.getUsername();
             Employee employee = employeeService.getEmployee(username);

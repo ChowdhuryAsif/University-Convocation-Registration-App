@@ -27,7 +27,7 @@ public class Program {
         this.coordinator = coordinator;
     }
 
-    public void addCourse(Course ...course) {
+    public void addCourse(Course... course) {
         if (courseList == null)
             courseList = new ArrayList<>();
 

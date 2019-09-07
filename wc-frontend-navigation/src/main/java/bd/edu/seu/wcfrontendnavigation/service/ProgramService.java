@@ -19,7 +19,7 @@ public class ProgramService {
     @Value("${programUrl}/programs")
     private String programUrl;
 
-    public Program insertProgram(Program program){
+    public Program insertProgram(Program program) {
         HttpEntity<Program> request = new HttpEntity<>(program);
         ResponseEntity<Program> response = restTemplate
                 .exchange(programUrl, HttpMethod.POST, request, Program.class);
@@ -27,7 +27,7 @@ public class ProgramService {
         return response.getBody();
     }
 
-    public Program getProgram(String id){
+    public Program getProgram(String id) {
         ResponseEntity<Program> response = restTemplate.exchange(
                 programUrl + "/" + id,
                 HttpMethod.GET,
@@ -45,12 +45,13 @@ public class ProgramService {
         return requestUpdate.getBody();
     }
 
-    public List<Program> findAll(){
+    public List<Program> findAll() {
         ResponseEntity<List<Program>> response = restTemplate.exchange(
                 programUrl,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Program>>(){});
+                new ParameterizedTypeReference<List<Program>>() {
+                });
         List<Program> programList = response.getBody();
         return programList;
     }

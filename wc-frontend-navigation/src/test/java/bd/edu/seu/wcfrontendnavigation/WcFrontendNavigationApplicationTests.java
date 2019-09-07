@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 public class WcFrontendNavigationApplicationTests {
 
     @Bean
-    private RestTemplate getRestTemplate(){
+    private RestTemplate getRestTemplate() {
         return new RestTemplate();
     }
 

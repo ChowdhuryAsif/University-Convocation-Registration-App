@@ -1,4 +1,5 @@
 package bd.edu.seu.wcfrontendnavigation.ui.admission;
+
 import bd.edu.seu.wcfrontendnavigation.model.Program;
 import bd.edu.seu.wcfrontendnavigation.model.Student;
 import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
@@ -63,11 +64,10 @@ public class Container extends VerticalLayout {
 
         menu.addSelectedChangeListener(menus -> {
             String tab = menus.getSelectedTab().getLabel();
-            if(tab.equals("Add Student")){
+            if (tab.equals("Add Student")) {
                 addStudentDialog.open();
                 addStudentDialog.setCloseOnOutsideClick(false);
-            }
-            else {
+            } else {
                 //something in future===========
             }
         });
@@ -122,7 +122,7 @@ public class Container extends VerticalLayout {
                 programComboBox.clear();
             } catch (ValidationException e) {
                 Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
-            } catch (Exception e){
+            } catch (Exception e) {
                 Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
         });

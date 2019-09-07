@@ -112,7 +112,7 @@ public class Container extends VerticalLayout {
         employeeGrid
                 .addComponentColumn(item -> setFormByItem(item, roleComboBox, programComboBox, sumbitButton, updateButton))
                 .setWidth("20px");
-        
+
 
         employee = new Employee();
         roleComboBox.addValueChangeListener(role -> this.employee.setRole(role.getValue()));
@@ -168,8 +168,6 @@ public class Container extends VerticalLayout {
         });
 
 
-
-
         horizontalLayout.add(employeeDetailsForm, employeeGrid);
 
         add(horizontalLayout);
@@ -194,7 +192,7 @@ public class Container extends VerticalLayout {
         return button;
     }
 
-    public void clearField(TextField initial, TextField name, TextField pass){
+    public void clearField(TextField initial, TextField name, TextField pass) {
         initial.setValue("");
         name.setValue("");
         pass.setValue("");

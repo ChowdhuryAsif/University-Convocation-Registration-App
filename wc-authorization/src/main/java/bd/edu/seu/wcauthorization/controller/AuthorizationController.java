@@ -15,20 +15,25 @@ public class AuthorizationController {
     public AuthorizationController(AuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
     }
+    @GetMapping("/{id}")
+    public LoginToken findById(@PathVariable String id){
+        LoginToken loginToken = authorizationService.findById(id);
+        return loginToken;
+    }
 
     @PostMapping("")
-    public LoginToken insert(@RequestBody LoginToken loginToken){
+    public LoginToken insert(@RequestBody LoginToken loginToken) {
         return authorizationService.insert(loginToken);
     }
 
     @GetMapping("")
-    public List<LoginToken> findAll(){
+    public List<LoginToken> findAll() {
         List<LoginToken> loginTokenList = authorizationService.findAll();
         return loginTokenList;
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable String id){
+    public void deleteById(@PathVariable String id) {
         authorizationService.deleteById(id);
     }
 }

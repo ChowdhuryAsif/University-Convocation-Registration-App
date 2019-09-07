@@ -31,10 +31,10 @@ public class CoordinatorView extends VerticalLayout {
         Header header = new Header(httpSession);
         header.addAttachListener(event -> {
             LoginToken loginToken = header.getLoginToken();
-            if(!loginToken.getRole().equals(Role.COORDINATOR)){
+            if (!loginToken.getRole().equals(Role.COORDINATOR)) {
                 httpSession.removeAttribute("user");
                 header.getUI().ifPresent(ui -> ui.navigate("login"));
-            }else{
+            } else {
                 header.setFullNameLabel("Welcome, Coordinator");
             }
         });
@@ -42,18 +42,16 @@ public class CoordinatorView extends VerticalLayout {
         Div body = new Div();
 
         loginToken = (LoginToken) httpSession.getAttribute("user");
-        if(loginToken == null || !loginToken.getRole().equals(Role.COORDINATOR)){
+        if (loginToken == null || !loginToken.getRole().equals(Role.COORDINATOR)) {
             httpSession.removeAttribute("user");
             header.getUI().ifPresent(ui -> ui.navigate("login"));
-        }
-        else{
+        } else {
             String username = loginToken.getUsername();
             Employee employee = employeeService.getEmployee(username);
             Container container = new Container(employee, studentService, programService, employeeService);
 
             body.add(container);
         }
-
 
 
         body.setWidth("800px");

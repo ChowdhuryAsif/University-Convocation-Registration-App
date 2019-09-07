@@ -2,15 +2,9 @@ package bd.edu.seu.wcfrontendnavigation.ui;
 
 import bd.edu.seu.wcfrontendnavigation.model.LoginToken;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 import javax.servlet.http.HttpSession;
@@ -23,11 +17,11 @@ public class Header extends HorizontalLayout {
         super();
 
         Image logo = new Image();
-        logo.setSrc("https://i.paste.pics/6mnqx.png");
+        logo.setSrc("https://i.imgur.com/ZQz7KpX.png");
         logo.setWidth("200px");
         logo.setHeight("50px");
         loginToken = (LoginToken) httpSession.getAttribute("user");
-        if(loginToken == null)
+        if (loginToken == null)
             loginToken = new LoginToken();
 
         fullNameLabel = new Label();
@@ -58,7 +52,7 @@ public class Header extends HorizontalLayout {
         return this.loginToken;
     }
 
-    public void setFullNameLabel(String fullName){
+    public void setFullNameLabel(String fullName) {
         fullNameLabel.setText(fullName);
     }
 }

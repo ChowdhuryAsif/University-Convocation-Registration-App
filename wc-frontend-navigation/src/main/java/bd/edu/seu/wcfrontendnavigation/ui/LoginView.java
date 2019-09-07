@@ -21,11 +21,11 @@ import javax.servlet.http.HttpSession;
 @Route("login")
 public class LoginView extends Dialog {
 
-    public LoginView(AuthenticationService authenticationService, HttpSession httpSession){
+    public LoginView(AuthenticationService authenticationService, HttpSession httpSession) {
         super();
 
         Image logo = new Image();
-        logo.setSrc("https://i.paste.pics/6mnqx.png");
+        logo.setSrc("https://i.imgur.com/ZQz7KpX.png");
 
         TextField usernameField = new TextField("StudentID/Initial", "13 digit id or initial");
         PasswordField passwordField = new PasswordField("Password", "your password");
@@ -44,7 +44,7 @@ public class LoginView extends Dialog {
         loginButton.addClickListener(event -> {
             LoginToken loginToken = authenticationService.authenticate(usernameField.getValue(), passwordField.getValue());
 
-            switch (loginToken.getRole()){
+            switch (loginToken.getRole()) {
                 case STUDENT:
                     httpSession.setAttribute("user", loginToken);
                     loginButton.getUI().ifPresent(ui -> ui.navigate("student"));
