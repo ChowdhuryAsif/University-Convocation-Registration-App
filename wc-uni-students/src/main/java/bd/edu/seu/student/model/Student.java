@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+
 import javax.validation.constraints.Email;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class Student {
     private String trxID;
     private Double feePaid;
     private List<Course> coursList;
+    private List<Grade> gradeList;
 
     public Student(Long id, String name, String loginPass, @Email String email, LocalDate dob, LocalDate admissionDate, String program) {
         this.id = id;
@@ -43,11 +45,18 @@ public class Student {
         this.program = program;
     }
 
-    public void registerCourse(Course ... course){
+    public void registerCourse(Course ... courses){
         if(coursList == null)
             coursList = new ArrayList<>();
 
-        Arrays.stream(course).forEach(tempCourse -> coursList.add(tempCourse));
+        Arrays.stream(courses).forEach(course -> coursList.add(course));
+    }
+
+    public void gradeCourse(Grade ... grades){
+        if(gradeList == null)
+            gradeList = new ArrayList<>();
+
+        Arrays.stream(grades).forEach(grade -> gradeList.add(grade));
     }
 
 }

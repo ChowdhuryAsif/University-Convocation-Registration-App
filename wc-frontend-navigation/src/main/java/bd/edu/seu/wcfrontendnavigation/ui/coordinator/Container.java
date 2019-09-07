@@ -86,7 +86,7 @@ public class Container extends VerticalLayout {
 
 
         Button closeDialogeButton = new Button("Close", VaadinIcon.CLOSE_CIRCLE.create());
-        Button registerButton = new Button("Confirm", VaadinIcon.PLUS_CIRCLE_O.create());
+        Button registerButton = new Button("Confirm", VaadinIcon.CHECK_SQUARE_O.create());
         registerButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         registerButton.getStyle().set("background-color", "#34c65d");
 
