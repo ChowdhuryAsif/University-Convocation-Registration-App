@@ -4,6 +4,7 @@ import bd.edu.seu.wcfrontendnavigation.enums.Role;
 import bd.edu.seu.wcfrontendnavigation.model.Employee;
 import bd.edu.seu.wcfrontendnavigation.model.LoginToken;
 import bd.edu.seu.wcfrontendnavigation.service.EmployeeService;
+import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
 import bd.edu.seu.wcfrontendnavigation.ui.Footer;
 import bd.edu.seu.wcfrontendnavigation.ui.Header;
 import com.vaadin.flow.component.grid.Grid;
@@ -19,10 +20,12 @@ public class HRDeputyView extends VerticalLayout {
 
     private LoginToken loginToken;
     private EmployeeService employeeService;
+    private ProgramService programService;
 
-    public HRDeputyView(EmployeeService employeeService, HttpSession httpSession) {
+    public HRDeputyView(ProgramService programService, EmployeeService employeeService, HttpSession httpSession) {
         super();
         this.employeeService = employeeService;
+        this.programService = programService;
 
         Header header = new Header(httpSession);
         header.addAttachListener(event -> {
@@ -44,7 +47,7 @@ public class HRDeputyView extends VerticalLayout {
         }
         else{
 
-            Container container = new Container(employeeService);
+            Container container = new Container(programService, employeeService);
 
             body.add(container);
         }

@@ -2,7 +2,9 @@ package bd.edu.seu.wcfrontendnavigation.ui.hrdeputy;
 
 import bd.edu.seu.wcfrontendnavigation.enums.Role;
 import bd.edu.seu.wcfrontendnavigation.model.Employee;
+import bd.edu.seu.wcfrontendnavigation.model.Program;
 import bd.edu.seu.wcfrontendnavigation.service.EmployeeService;
+import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -18,6 +20,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Container extends VerticalLayout {
@@ -26,13 +30,16 @@ public class Container extends VerticalLayout {
     private Employee employee;
     private Grid<Employee> employeeGrid;
     private EmployeeService employeeService;
-    private ComboBox<Role> comboBox;
+    private ProgramService programService;
+    private ComboBox<Role> roleComboBox;
     private Button sumbitButton;
     private Button updateButton;
     private Button resetButton;
+    private ComboBox<String> programComboBox;
 
-    public Container(EmployeeService employeeService) {
+    public Container(ProgramService programService, EmployeeService employeeService) {
         this.employeeService = employeeService;
+        this.programService = programService;
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         employeeBinder = new Binder<>();
@@ -41,6 +48,18 @@ public class Container extends VerticalLayout {
         TextField initialField = new TextField("Initial");
         TextField nameField = new TextField("Name");
         TextField loginPassField = new TextField("Login Pass");
+
+        programComboBox = new ComboBox<>();
+        programComboBox.setLabel("Program");
+        programComboBox.setPlaceholder("e.i. BSc in CSE");
+
+        List<Program> programList = programService.findAll();
+
+        List<String> programTitleList = new ArrayList<>();
+        programList.forEach(program -> programTitleList.add(program.getTitle()));
+        programComboBox.setItems(programTitleList);
+        programComboBox.setRequired(true);
+        programComboBox.setLabel("Program");
 
         employeeBinder
                 .forField(initialField)
@@ -57,11 +76,11 @@ public class Container extends VerticalLayout {
                 .asRequired()
                 .bind(Employee::getLoginPass, Employee::setLoginPass);
 
-        comboBox = new ComboBox<>("Role");
-        comboBox.setItems(Role.ADMISSION_OFFICER, Role.DEPUTY_REGISTRAR, Role.HR_DEPUTY_REGISTRAR, Role.COORDINATOR, Role.EXAM_OFFICER);
-        comboBox.setPlaceholder("Employee Role");
-        comboBox.setClearButtonVisible(true);
-        comboBox.setRequired(true);
+        roleComboBox = new ComboBox<>("Role");
+        roleComboBox.setItems(Role.ADMISSION_OFFICER, Role.DEPUTY_REGISTRAR, Role.HR_DEPUTY_REGISTRAR, Role.COORDINATOR, Role.EXAM_OFFICER);
+        roleComboBox.setPlaceholder("Employee Role");
+        roleComboBox.setClearButtonVisible(true);
+        roleComboBox.setRequired(true);
 
 
         sumbitButton = new Button("Submit", VaadinIcon.ADD_DOCK.create());
@@ -80,7 +99,7 @@ public class Container extends VerticalLayout {
         resetButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
 
-        employeeDetailsForm.add(initialField, nameField, loginPassField, comboBox, sumbitButton, updateButton, resetButton);
+        employeeDetailsForm.add(initialField, nameField, loginPassField, roleComboBox, programComboBox, sumbitButton, updateButton, resetButton);
         employeeDetailsForm.setWidth("300px");
         employeeDetailsForm.getStyle().set("margin-left", "100px");
         employeeDetailsForm.getStyle().set("margin-top", "-30px");
@@ -91,12 +110,13 @@ public class Container extends VerticalLayout {
         employeeGrid.setColumns("initial", "name", "loginPass", "role");
         employeeGrid.getStyle().set("margin-left", "50px");
         employeeGrid
-                .addComponentColumn(item -> setFormByItem(item, comboBox, sumbitButton, updateButton))
+                .addComponentColumn(item -> setFormByItem(item, roleComboBox, programComboBox, sumbitButton, updateButton))
                 .setWidth("20px");
         
 
         employee = new Employee();
-        comboBox.addValueChangeListener(role -> this.employee.setRole(role.getValue()));
+        roleComboBox.addValueChangeListener(role -> this.employee.setRole(role.getValue()));
+        programComboBox.addValueChangeListener(program -> this.employee.setProgram(program.getValue()));
         sumbitButton.addClickListener(event -> {
 
             try {
@@ -106,7 +126,8 @@ public class Container extends VerticalLayout {
                 Notification.show(insertedEmployee.getName() + " inserted!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
                 clearField(initialField, nameField, loginPassField);
-                comboBox.clear();
+                roleComboBox.clear();
+                programComboBox.clear();
             } catch (ValidationException e) {
                 Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_ERROR);
             } catch (Exception e) {
@@ -122,7 +143,8 @@ public class Container extends VerticalLayout {
                 Notification.show(updatedEmployee.getName() + " updated!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
                 clearField(initialField, nameField, loginPassField);
-                comboBox.clear();
+                roleComboBox.clear();
+                programComboBox.clear();
                 sumbitButton.getStyle().set("background-color", "#34c65d");
                 updateButton.getStyle().set("background-color", "gray");
                 sumbitButton.setEnabled(true);
@@ -137,7 +159,8 @@ public class Container extends VerticalLayout {
 
         resetButton.addClickListener(event -> {
             clearField(initialField, nameField, loginPassField);
-            comboBox.clear();
+            roleComboBox.clear();
+            programComboBox.clear();
             sumbitButton.getStyle().set("background-color", "#34c65d");
             updateButton.getStyle().set("background-color", "gray");
             sumbitButton.setEnabled(true);
@@ -153,12 +176,13 @@ public class Container extends VerticalLayout {
 
     }
 
-    private Component setFormByItem(Employee employee, ComboBox comboBox, Button sumbitButton, Button updateButton) {
+    private Component setFormByItem(Employee employee, ComboBox roleComboBox, ComboBox programComboBox, Button sumbitButton, Button updateButton) {
         Button button = new Button();
         button.setIcon(VaadinIcon.EDIT.create());
         button.addClickListener(event -> {
             employeeBinder.readBean(employee);
-            comboBox.setValue(employee.getRole());
+            roleComboBox.setValue(employee.getRole());
+            programComboBox.setValue(employee.getProgram());
 
             sumbitButton.setEnabled(false);
             sumbitButton.getStyle().set("background-color", "gray");

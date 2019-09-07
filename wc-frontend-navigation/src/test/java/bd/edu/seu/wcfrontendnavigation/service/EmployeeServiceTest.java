@@ -26,7 +26,7 @@ public class EmployeeServiceTest {
 
     @Test
     public void insertTest(){
-        Employee employee = new Employee("RB", "Rajon Bardhan", "RB", Role.COORDINATOR);
+        Employee employee = new Employee("RB", "Rajon Bardhan", "RB", "BSc in CSE", Role.COORDINATOR);
 
         Employee result = employeeService.insertEmployee(employee);
 
@@ -35,7 +35,7 @@ public class EmployeeServiceTest {
 
     @Test
     public void updateTest(){
-        Employee employee = new Employee("RB", "Rajon Bardhan", "RB", Role.ADMISSION_OFFICER);
+        Employee employee = new Employee("RB", "Rajon Bardhan", "RB", "BSc in CSE", Role.ADMISSION_OFFICER);
 
         Employee updateEmployee = employeeService.updateEmployee("RB", employee);
 
