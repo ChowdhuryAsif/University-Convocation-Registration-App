@@ -1,53 +1,55 @@
-package bd.edu.seu.wcfrontendnavigation.ui.hrdeputy;
+package bd.edu.seu.wcfrontendnavigation.ui.coordinator;
 
 import bd.edu.seu.wcfrontendnavigation.enums.Role;
 import bd.edu.seu.wcfrontendnavigation.model.Employee;
 import bd.edu.seu.wcfrontendnavigation.model.LoginToken;
 import bd.edu.seu.wcfrontendnavigation.service.EmployeeService;
 import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
+import bd.edu.seu.wcfrontendnavigation.service.StudentService;
 import bd.edu.seu.wcfrontendnavigation.ui.Footer;
 import bd.edu.seu.wcfrontendnavigation.ui.Header;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
 import javax.servlet.http.HttpSession;
 
-@Route("hr-deputy")
-public class HRDeputyView extends VerticalLayout {
+@Route("coordinator")
+public class CoordinatorView extends VerticalLayout {
 
     private LoginToken loginToken;
     private EmployeeService employeeService;
     private ProgramService programService;
+    private StudentService studentService;
 
-    public HRDeputyView(ProgramService programService, EmployeeService employeeService, HttpSession httpSession) {
+    public CoordinatorView(StudentService studentService, ProgramService programService, EmployeeService employeeService, HttpSession httpSession) {
         super();
         this.employeeService = employeeService;
         this.programService = programService;
+        this.studentService = studentService;
 
         Header header = new Header(httpSession);
         header.addAttachListener(event -> {
             LoginToken loginToken = header.getLoginToken();
-            if(!loginToken.getRole().equals(Role.HR_DEPUTY_REGISTRAR)){
+            if(!loginToken.getRole().equals(Role.COORDINATOR)){
                 httpSession.removeAttribute("user");
                 header.getUI().ifPresent(ui -> ui.navigate("login"));
             }else{
-                header.setFullNameLabel("Deputy Registrar (Human Resource)");
+                header.setFullNameLabel("Welcome, Coordinator");
             }
         });
 
         Div body = new Div();
 
         loginToken = (LoginToken) httpSession.getAttribute("user");
-        if(loginToken == null || !loginToken.getRole().equals(Role.HR_DEPUTY_REGISTRAR)){
+        if(loginToken == null || !loginToken.getRole().equals(Role.COORDINATOR)){
             httpSession.removeAttribute("user");
             header.getUI().ifPresent(ui -> ui.navigate("login"));
         }
         else{
-
-            Container container = new Container(programService, employeeService);
+            String username = loginToken.getUsername();
+            Employee employee = employeeService.getEmployee(username);
+            Container container = new Container(employee, studentService, programService, employeeService);
 
             body.add(container);
         }

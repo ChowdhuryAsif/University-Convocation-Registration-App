@@ -1,13 +1,17 @@
 package bd.edu.seu.wcfrontendnavigation.service;
 
+import bd.edu.seu.wcfrontendnavigation.model.Program;
 import bd.edu.seu.wcfrontendnavigation.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 
 @Service
@@ -41,6 +45,17 @@ public class StudentService {
         HttpEntity<Student> requestUpdate = new HttpEntity<>(student);
         restTemplate.exchange(resourceUrl, HttpMethod.PUT, requestUpdate, Student.class);
         return requestUpdate.getBody();
+    }
+
+    public List<Student> findAll(){
+        ResponseEntity<List<Student>> response = restTemplate.exchange(
+                studentUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Student>>(){});
+        List<Student> studentList = response.getBody();
+
+        return studentList;
     }
 
 }
