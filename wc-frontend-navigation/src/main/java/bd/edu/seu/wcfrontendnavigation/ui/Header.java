@@ -3,6 +3,7 @@ package bd.edu.seu.wcfrontendnavigation.ui;
 import bd.edu.seu.wcfrontendnavigation.model.LoginToken;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
@@ -39,7 +40,18 @@ public class Header extends HorizontalLayout {
             logoutButton.getUI().ifPresent(ui -> ui.navigate("login"));
         });
 
-        add(logo, fullNameLabel, logoutButton);
+        HorizontalLayout headerPart = new HorizontalLayout();
+        headerPart.add(fullNameLabel, logoutButton);
+        fullNameLabel.getStyle()
+                .set("margin-top", "5px")
+                .set("margin-right", "10px")
+                .set("font-size", "20px");
+        headerPart.getStyle()
+                .set("margin-right", "60px")
+                .set("right", "0")
+                .set("position", "absolute");
+
+        add(logo, headerPart);
     }
 
     public LoginToken getLoginToken() {

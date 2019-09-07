@@ -16,5 +16,6 @@ public class Employee {
     private String initial;
     private String name;
     private String loginPass;
+    private String program;
     private Role role;
 }
