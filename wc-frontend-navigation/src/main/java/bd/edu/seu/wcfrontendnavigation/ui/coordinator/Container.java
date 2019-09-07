@@ -56,6 +56,9 @@ public class Container extends VerticalLayout {
         studentGrid
                 .addColumn(Student::getCrCompleted)
                 .setHeader("Credit Completed");
+        studentGrid
+                .addColumn(Student::getCgpa)
+                .setHeader("CGPA");
 //        studentGrid
 //                .addComponentColumn(student -> registerCourse(student));   // don't know why it's not working
 

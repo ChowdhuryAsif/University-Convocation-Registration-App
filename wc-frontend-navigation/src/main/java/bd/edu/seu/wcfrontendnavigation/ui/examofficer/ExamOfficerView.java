@@ -1,13 +1,12 @@
 package bd.edu.seu.wcfrontendnavigation.ui.examofficer;
 
 import bd.edu.seu.wcfrontendnavigation.enums.Role;
+import bd.edu.seu.wcfrontendnavigation.model.Employee;
 import bd.edu.seu.wcfrontendnavigation.model.LoginToken;
-import bd.edu.seu.wcfrontendnavigation.model.Student;
-import bd.edu.seu.wcfrontendnavigation.service.ProgramService;
+import bd.edu.seu.wcfrontendnavigation.service.EmployeeService;
 import bd.edu.seu.wcfrontendnavigation.service.StudentService;
 import bd.edu.seu.wcfrontendnavigation.ui.Footer;
 import bd.edu.seu.wcfrontendnavigation.ui.Header;
-import bd.edu.seu.wcfrontendnavigation.ui.student.Container;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -17,10 +16,13 @@ import javax.servlet.http.HttpSession;
 @Route("exam-officer")
 public class ExamOfficerView extends VerticalLayout {
     private LoginToken loginToken;
+    private EmployeeService employeeService;
+    private StudentService studentService;
 
-    public ExamOfficerView(HttpSession httpSession) {
+    public ExamOfficerView(StudentService studentService, EmployeeService employeeService, HttpSession httpSession) {
         super();
-
+        this.employeeService = employeeService;
+        this.studentService = studentService;
 
 
         Header header = new Header(httpSession);
@@ -32,7 +34,7 @@ public class ExamOfficerView extends VerticalLayout {
                 header.getUI().ifPresent(ui -> ui.navigate("login"));
             }
             else{
-                header.setFullNameLabel("Exam Officer");
+                header.setFullNameLabel("Welcome, Exam Officer");
             }
         });
 
@@ -45,7 +47,11 @@ public class ExamOfficerView extends VerticalLayout {
         }
         else{
 
-            // container goes here ==============
+            String username = loginToken.getUsername();
+            Employee employee = employeeService.getEmployee(username);
+            Container container = new Container(employee, studentService, employeeService);
+
+            body.add(container);
         }
 
 

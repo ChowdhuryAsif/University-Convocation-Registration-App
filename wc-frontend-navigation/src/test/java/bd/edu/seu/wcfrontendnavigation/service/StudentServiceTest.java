@@ -12,6 +12,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StudentServiceTest {
@@ -19,6 +21,21 @@ public class StudentServiceTest {
     private StudentService studentService;
     @Value("${studentUrl}/students")
     private String studentUrl;
+
+    @Test
+    public void insertStudentTest() {
+        Student student = new Student();
+        student.setId(1236l);
+        student.setName("Test guy");
+        student.setEmail("test@test.com");
+        student.setProgram("BSc in CSE");
+        student.setLoginPass("1236");
+        student.setDob(LocalDate.now());
+        student.setAdmissionDate(LocalDate.now());
+
+        Student insertStudent = studentService.insertStudent(student);
+        System.out.println(insertStudent.toString());
+    }
 
     @Test
     public void updateStudentTest(){
